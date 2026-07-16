@@ -32,8 +32,8 @@ services:
       - ./backend/app:/app/app
 
     depends_on:
-      postgres:
-        condition: service_healthy
+      # postgres:
+      #   condition: service_healthy
 
       redis:
         condition: service_healthy
@@ -56,30 +56,30 @@ services:
       start_period: 10s
 
 
-  postgres:
-    image: postgres:17-alpine
+  # postgres:
+  #   image: postgres:17-alpine
 
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-app_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
-      POSTGRES_DB: ${POSTGRES_DB:-knowledge_platform}
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER:-app_user}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
+  #     POSTGRES_DB: ${POSTGRES_DB:-knowledge_platform}
 
-    ports:
-      - "5433:5432"
+  #   ports:
+  #     - "5432:5432"
 
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
 
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-app_user} -d ${POSTGRES_DB:-knowledge_platform}"
-        ]
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD-SHELL",
+  #         "pg_isready -U ${POSTGRES_USER:-app_user} -d ${POSTGRES_DB:-knowledge_platform}"
+  #       ]
 
-      interval: 5s
-      timeout: 5s
-      retries: 10
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
 
 
   redis:

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.health import router as health_router
+from app.api.router import api_router
 from app.core.config import settings
 
 
@@ -10,6 +10,7 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    
 )
 
 app.add_middleware(
@@ -20,12 +21,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(health_router, prefix=settings.API_PREFIX)
+app.include_router(api_router, prefix=settings.API_PREFIX)
 
-@app.get("/")
-def root() -> dict[str, str]:
-    return {
-        "message": settings.APP_NAME,
-        "docs": "/docs",
-        "health": f"{settings.API_PREFIX}/health"
-    }
+# @app.get("/health", tags=["Health"])
+# async def health_check() -> dict[str, str]:
+#     return {
+#         "status": "ok",
+#         "service": settings.APP_NAME,
+#     }

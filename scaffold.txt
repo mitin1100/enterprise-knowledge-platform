@@ -1,0 +1,117 @@
+backend/
+  app/
+    main.py
+
+    api/
+      v1/
+        auth.py
+        documents.py
+        chat.py
+        workspaces.py
+        evaluation.py
+
+    core/
+      config.py
+      security.py
+      logging.py
+      exceptions.py
+
+    db/
+      session.py
+      models.py
+      migrations/
+
+    schemas/
+      auth.py
+      document.py
+      chat.py
+      workspace.py
+
+    services/
+      document_service.py
+      parsing_service.py
+      chunking_service.py
+      embedding_service.py
+      retrieval_service.py
+      rerank_service.py
+      generation_service.py
+      citation_service.py
+      evaluation_service.py
+
+    repositories/
+      user_repository.py
+      document_repository.py
+      chunk_repository.py
+      chat_repository.py
+
+    workers/
+      celery_app.py
+      document_tasks.py
+
+    prompts/
+      qa_prompt.txt
+      citation_prompt.txt
+      query_rewrite_prompt.txt
+
+    tests/
+      test_document_upload.py
+      test_retrieval.py
+      test_chat.py
+
+-----------------------------
+
+frontend/
+  src/
+    pages/
+      LoginPage
+      DashboardPage
+      WorkspacePage
+      DocumentPage
+      ChatPage
+
+    components/
+      FileUploader
+      ChatBox
+      DocumentList
+      CitationViewer
+      EvaluationPanel
+
+    services/
+      apiClient
+      authApi
+      documentApi
+      chatApi
+
+    stores/
+      authStore
+      chatStore	  
+
+-------------------------
+
+infra/
+  docker/
+  nginx/
+  scripts/
+
+docker-compose.yml
+docker-compose.prod.yml
+.env.example
+README.md	  
+	  
+--------------------
+
+Frontend: http://localhost:5173
+Backend: http://localhost:8000
+Swagger: http://localhost:8000/docs
+Health: http://localhost:8000/api/v1/health
+Dependencies: http://localhost:8000/api/v1/health/dependencies
+Elasticsearch: http://localhost:9200
+Kiểm tra container	  
+
+
++Phát ra giọng đọc
+
+
+
+
+

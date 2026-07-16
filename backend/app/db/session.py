@@ -1,20 +1,22 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy import create_engine, text
+# from sqlalchemy.orm import sessionmaker
+
+from sqlalchemy.ext.asyncio import(
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine
+)
 
 from app.core.config import settings
 
-engine = create_engine(
+engine = create_async_engine(
     str(settings.DATABASE_URL),
     pool_pre_ping=True,
 )
 
-SessionLocal = sessionmaker(
+AsyncSessionLocal = async_sessionmaker(
     bind=engine,
+    class_=AsyncSession,
     autoflush=False,
     expire_on_commit=False
 )
-
-def check_database() -> bool:
-    with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
-    return True

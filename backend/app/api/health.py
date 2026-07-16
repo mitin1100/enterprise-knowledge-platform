@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 from redis import Redis
 
 from app.core.config import settings
-from app.db.session import check_database
+# from app.db.session import check_database
 
 
 router = APIRouter(tags=['health'])
@@ -15,41 +15,41 @@ def health_check() -> dict[str, str]:
         "service": settings.APP_NAME,
     }
 
-@router.get("/health/dependencies")
-def dependency_health_check() -> dict[str, object]:
-    checks: dict[str, str] = {}
+# @router.get("/health/dependencies")
+# def dependency_health_check() -> dict[str, object]:
+#     checks: dict[str, str] = {}
 
-    try:
-        check_database()
-        checks["postgres"] = "ok"
-    except Exception as exc:
-        checks["postgres"] = (
-            f"error: {type(exc).__name__}: {str(exc)}"
-        )
+#     try:
+#         check_database()
+#         checks["postgres"] = "ok"
+#     except Exception as exc:
+#         checks["postgres"] = (
+#             f"error: {type(exc).__name__}: {str(exc)}"
+#         )
 
-    try:
-        elasticsearch_client = Elasticsearch(
-            settings.elasticsearch_url
-        )
+#     try:
+#         elasticsearch_client = Elasticsearch(
+#             settings.elasticsearch_url
+#         )
 
-        if elasticsearch_client.info():
-            checks["elasticsearch"] = "ok"
-        else:
-            checks["elasticsearch"] = (
-                "error: ping returned False"
-            )
+#         if elasticsearch_client.info():
+#             checks["elasticsearch"] = "ok"
+#         else:
+#             checks["elasticsearch"] = (
+#                 "error: ping returned False"
+#             )
 
-    except Exception as exc:
-        checks["elasticsearch"] = (
-            f"error: {type(exc).__name__}: {str(exc)}"
-        )
+#     except Exception as exc:
+#         checks["elasticsearch"] = (
+#             f"error: {type(exc).__name__}: {str(exc)}"
+#         )
 
-    healthy = all(
-        value == "ok" for value in checks.values()
-    )
-    print(checks)
+#     healthy = all(
+#         value == "ok" for value in checks.values()
+#     )
+#     print(checks)
 
-    return {
-        "status": "ok" if healthy else "degraded",
-        "checks": checks,
-    }
+#     return {
+#         "status": "ok" if healthy else "degraded",
+#         "checks": checks,
+#     }
