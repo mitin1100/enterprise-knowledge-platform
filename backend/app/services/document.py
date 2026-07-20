@@ -81,7 +81,7 @@ class DocumentService:
             )
 
         document_id = uuid.uuid4()
-        stored_filename = f"original.{validated_file.extension}"
+        stored_filename = f"{file.filename}.{validated_file.extension}"
 
         storage_key = (
             f"workspaces/{workspace_id}/"

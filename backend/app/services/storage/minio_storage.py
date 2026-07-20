@@ -20,6 +20,7 @@ class MinioStorageService(StorageService):
             endpoint=endpoint,
             access_key=access_key,
             secret_key=secret_key,
+            secure=False
         )
         self.bucket_name = bucket_name
 

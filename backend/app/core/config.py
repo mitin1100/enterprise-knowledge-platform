@@ -46,7 +46,7 @@ class Settings(BaseSettings):
 
 
     # Storage
-    STORAGE_PROVIDER: Literal["local", "minio"] = "local"
+    STORAGE_PROVIDER: Literal["local", "minio"] = "minio"
     LOCAL_STORAGE_PATH: Path = Path("./storage")
 
 
