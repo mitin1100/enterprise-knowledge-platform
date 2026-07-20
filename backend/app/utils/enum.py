@@ -11,3 +11,8 @@ class MessageRole(StrEnum):
     USER = "USER"
     ASSISTANT = "ASSISTANT"
     SYSTEM = "SYSTEM"
+
+
+class StorageProvider(StrEnum):
+    LOCAL = "LOCAL"
+    MINIO = "MINIO"

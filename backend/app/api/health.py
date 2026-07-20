@@ -1,6 +1,4 @@
 from fastapi import APIRouter
-from elasticsearch import Elasticsearch
-from redis import Redis
 
 from app.core.config import settings
 # from app.db.session import check_database
@@ -9,7 +7,7 @@ from app.core.config import settings
 router = APIRouter(tags=['health'])
 
 @router.get("/health")
-def health_check() -> dict[str, str]:
+async def health_check() -> dict[str, str]:
     return {
         "status": "ok",
         "service": settings.APP_NAME,

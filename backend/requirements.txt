@@ -15,4 +15,8 @@ python-multipart
 email-validator
 asyncpg
 
+minio
+celery 
+redis
+
 alembic

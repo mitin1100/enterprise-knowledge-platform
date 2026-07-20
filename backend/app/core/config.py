@@ -3,6 +3,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, SecretStr, computed_field
 from pydantic_core import MultiHostUrl
 from urllib.parse import quote
+from pathlib import Path
+from typing import Literal
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -40,8 +42,19 @@ class Settings(BaseSettings):
     # Security
     JWT_SECRET: SecretStr
     JWT_ALGORITHM: str = "HS256"
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 10
-    
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 20
+
+
+    # Storage
+    STORAGE_PROVIDER: Literal["local", "minio"] = "local"
+    LOCAL_STORAGE_PATH: Path = Path("./storage")
+
+
+    MINIO_ENDPOINT: str = Field(env="MINIO_ENDPOINT")
+    MINIO_ACCESS_KEY: SecretStr | None = Field(None, env="MINIO_ACCESS_KEY")
+    MINIO_SECRET_KEY: SecretStr | None = Field(None, env="MINIO_SECRET_KEY")
+    MINIO_BUCKET_NAME: str = Field("documents", env="MINIO_BUCKET_NAME")
+
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -49,6 +62,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    max_upload_size_mb: int = 20
 
     @property
     def redis_url(self) -> str:

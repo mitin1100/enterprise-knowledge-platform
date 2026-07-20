@@ -3,13 +3,13 @@ from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
-from sqlalchemy import BigInteger, Column, Enum as SQLEnum, ForeignKey, String, Text
+from sqlalchemy import BigInteger, Column, Enum as SQLEnum, ForeignKey, String, Text, JSON
 from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
 from sqlmodel import Field, Relationship
 import sqlalchemy as sa
 
 from app.models.base import BaseModel
-from app.utils.enum import DocumentStatus
+from app.utils.enum import DocumentStatus, StorageProvider
 
 if TYPE_CHECKING:
     from app.models.document_chunk import DocumentChunk
@@ -121,4 +121,48 @@ class Document(BaseModel, table=True):
             "order_by": "DocumentChunk.chunk_index",
         },
     )
+
+    mime_type: str = Field(
+        sa_column=Column(
+            "mime_type",
+            String,
+            nullable=False,
+        ),
+        description="MIME type of the document (e.g., application/pdf, text/plain)",
+    )
+
+    doc_metadata: dict | None = Field(
+        sa_column=Column(
+            "doc_metadata",
+            JSON,
+            nullable=True,
+        ),
+        description="JSON metadata (chunk_size, overlap, external vectorID, etc.)",
+    )
+
+    @property
+    def storage_key(self) -> str:
+        return self.storage_path
+
+    @property
+    def file_extension(self) -> str:
+        if self.doc_metadata and self.doc_metadata.get("file_extension"):
+            return str(self.doc_metadata["file_extension"])
+
+        return self.filename.rsplit(".", maxsplit=1)[-1]
+
+    @property
+    def storage_provider(self) -> StorageProvider:
+        if self.doc_metadata and self.doc_metadata.get("storage_provider"):
+            return StorageProvider(str(self.doc_metadata["storage_provider"]))
+
+        return StorageProvider.LOCAL
+
+    @property
+    def checksum(self) -> str | None:
+        if not self.doc_metadata:
+            return None
+
+        checksum = self.doc_metadata.get("checksum")
+        return str(checksum) if checksum else None
 
