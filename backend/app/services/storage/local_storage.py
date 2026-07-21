@@ -2,6 +2,7 @@ import asyncio
 from pathlib import Path
 from shutil import copyfileobj
 from typing import BinaryIO
+import shutil
 
 from app.services.storage.base import StorageService
 
@@ -79,3 +80,31 @@ class LocalStorageService(StorageService):
             raise ValueError("Invalid storage path")
 
         return target_path
+
+    async def download_file(
+        self,
+        storage_key: str,
+        destination: Path,
+    ) -> None:
+        source = (
+            self.base_path / storage_key
+        ).resolve()
+
+        if self.base_path not in source.parents:
+            raise ValueError("Invalid storage key.")
+
+        if not source.is_file():
+            raise FileNotFoundError(
+                f"Storage object does not exist: {storage_key}"
+            )
+
+        destination.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        await asyncio.to_thread(
+            shutil.copyfile,
+            source,
+            destination,
+        )

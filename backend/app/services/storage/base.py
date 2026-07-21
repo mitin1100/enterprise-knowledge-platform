@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import BinaryIO
 
+from pathlib import Path
+
 
 class StorageService(ABC):
     @abstractmethod
@@ -31,4 +33,12 @@ class StorageService(ABC):
         self,
         storage_key: str,
     ) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def download_file(
+        self,
+        storage_key: str,
+        destination: Path,
+    ) -> None:
         raise NotImplementedError

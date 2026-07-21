@@ -8,6 +8,9 @@ celery_app = Celery(
     "enterprise_knowledge_platform",
     broker=settings.redis_url,
     backend=settings.redis_url,
+    include=[
+        "app.tasks.document_parsing"
+    ]
 )
 
 celery_app.conf.update(
@@ -20,6 +23,11 @@ celery_app.conf.update(
     task_acks_late=True,
     worker_prefetch_multiplier=1,
     broker_connection_retry_on_startup=True,
+    task_routes={
+        "documents.parse": {
+            "queue": "document_parsing",
+        },
+    },
 )
 
 celery_app.autodiscover_tasks(["app.tasks"])

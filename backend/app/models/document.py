@@ -1,5 +1,4 @@
 
-from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
@@ -12,7 +11,7 @@ from app.models.base import BaseModel
 from app.utils.enum import DocumentStatus, StorageProvider
 
 if TYPE_CHECKING:
-    from app.models.document_chunk import DocumentChunk
+    from app.models.document_parsing import DocumentParsing
     from app.models.workspace import Workspace
 
 
@@ -68,17 +67,17 @@ class Document(BaseModel, table=True):
         description="Original uploaded filename",
     )
 
-    content_type: Optional[str] = Field(
-        default=None,
-        sa_type=String,
-        description="MIME type of the uploaded document",
-    )
+    # content_type: Optional[str] = Field(
+    #     default=None,
+    #     sa_type=String,
+    #     description="MIME type of the uploaded document",
+    # )
 
-    storage_path: str = Field(
-        sa_type=Text,
-        nullable=False,
-        description="Path or object key where the document is stored",
-    )
+    # storage_path: str = Field(
+    #     sa_type=Text,
+    #     nullable=False,
+    #     description="Path or object key where the document is stored",
+    # )
 
     file_size: Optional[int] = Field(
         default=None,
@@ -100,7 +99,7 @@ class Document(BaseModel, table=True):
             nullable=False,
             default=DocumentStatus.PENDING,
         ),
-        description="Current processing status: UPLOADED, PROCESSING, INGESTED, FAILED",
+        description="Current document status: PENDING, PROCESSING, UPLOADED, FAILED",
     )
 
     error_message: Optional[str] = Field(
@@ -113,12 +112,12 @@ class Document(BaseModel, table=True):
         back_populates="documents",
     )
 
-    chunks: list["DocumentChunk"] = Relationship(
+    parsings: Optional["DocumentParsing"] = Relationship(
         back_populates="document",
         sa_relationship_kwargs={
             "cascade": "all, delete-orphan",
             "passive_deletes": True,
-            "order_by": "DocumentChunk.chunk_index",
+            "uselist": False,
         },
     )
 
@@ -140,9 +139,18 @@ class Document(BaseModel, table=True):
         description="JSON metadata (chunk_size, overlap, external vectorID, etc.)",
     )
 
+    doc_uri: str = Field(
+        sa_column=Column(
+            "doc_uri",
+            String,
+            nullable=False,
+        ),
+        description="URI or path to the document file",
+    )
+
     @property
     def storage_key(self) -> str:
-        return self.storage_path
+        return self.doc_uri
 
     @property
     def file_extension(self) -> str:

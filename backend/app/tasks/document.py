@@ -48,7 +48,7 @@ async def process_document_async(
                     "status": "not_found",
                 }
 
-            if document.status == DocumentStatus.COMPLETED:
+            if document.status == DocumentStatus.UPLOADED:
                 return {
                     "document_id": document_id,
                     "status": "already_completed",
@@ -90,7 +90,7 @@ async def process_document_async(
                 timezone.utc
             ).isoformat()
 
-            document.status = DocumentStatus.COMPLETED
+            document.status = DocumentStatus.UPLOADED
             document.doc_metadata = metadata
             document.error_message = None
 
@@ -99,7 +99,7 @@ async def process_document_async(
 
             return {
                 "document_id": document_id,
-                "status": DocumentStatus.COMPLETED.value,
+                "status": DocumentStatus.UPLOADED.value,
             }
 
         except Exception as exc:
@@ -111,7 +111,7 @@ async def process_document_async(
                 metadata = dict(document.doc_metadata or {})
                 metadata["processing_completed_at"] = datetime.now(
                     timezone.utc
-                ).isoformat()
+            ).isoformat()
 
                 document.status = DocumentStatus.FAILED
                 document.doc_metadata = metadata

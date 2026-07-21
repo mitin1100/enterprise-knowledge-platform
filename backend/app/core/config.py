@@ -62,7 +62,51 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    max_upload_size_mb: int = 20
+    max_upload_size_mb: int = Field(
+        default=20,
+        alias="MAX_UPLOAD_SIZE_MB",
+    )
+
+
+    parsing_max_file_size_mb: int = Field(
+        default=100,
+        alias="PARSING_MAX_FILE_SIZE_MB",
+    )
+
+    parsing_max_pdf_pages: int = Field(
+        default=1000,
+        alias="PARSING_MAX_PDF_PAGES",
+    )
+
+    parsing_ocr_enabled: bool = Field(
+        default=True,
+        alias="PARSING_OCR_ENABLED",
+    )
+
+    parsing_ocr_languages: str = Field(
+        default="vie+eng",
+        alias="PARSING_OCR_LANGUAGES",
+    )
+
+    parsing_ocr_dpi: int = Field(
+        default=200,
+        alias="PARSING_OCR_DPI",
+    )
+
+    parsing_min_page_text_length: int = Field(
+        default=40,
+        alias="PARSING_MIN_PAGE_TEXT_LENGTH",
+    )
+
+    parsing_header_footer_ratio: float = Field(
+        default=0.6,
+        alias="PARSING_HEADER_FOOTER_RATIO",
+    )
+
+    parsing_max_output_chars: int = Field(
+        default=10000000,
+        alias="PARSING_MAX_OUTPUT_CHARS",
+    )
 
     @property
     def redis_url(self) -> str:

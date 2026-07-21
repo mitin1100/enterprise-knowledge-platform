@@ -9,8 +9,10 @@ from app.core.config import get_settings
 from app.models.document import Document
 from app.models.workspace import Workspace
 from app.repositories.document import DocumentRepository
+from app.repositories.document_parsing import DocumentParsingRepository
 from app.services.storage.base import StorageService
 from app.tasks.document import process_document
+from app.tasks.document_parsing import parse_document_task
 from app.utils.enum import DocumentStatus, StorageProvider
 from app.utils.file_hash import calculate_sha256
 from app.utils.file_validation import validate_upload_file
@@ -25,6 +27,7 @@ class DocumentService:
         self.db = db
         self.storage = storage
         self.repository = DocumentRepository(db)
+        self.parsing_repository = DocumentParsingRepository(db)
         self.settings = get_settings()
 
     async def upload_document(
@@ -81,7 +84,7 @@ class DocumentService:
             )
 
         document_id = uuid.uuid4()
-        stored_filename = f"{file.filename}.{validated_file.extension}"
+        stored_filename = validated_file.original_filename
 
         storage_key = (
             f"workspaces/{workspace_id}/"
@@ -144,3 +147,31 @@ class DocumentService:
             ) from exc
 
         return document
+
+    async def complete_upload(
+        self,
+        document_id: UUID,
+    ):
+        document = await self.repository.get_by_id(
+            document_id
+        )
+
+        if document is None:
+            raise ValueError("Document does not exist.")
+
+        document_parsing = (
+            await self.parsing_repository
+            .get_or_create_for_document(document)
+        )
+
+        await self.parsing_repository.mark_parsing_queued(
+            document_parsing
+        )
+        await self.db.commit()
+
+        parse_document_task.delay(
+            str(document.id)
+        )
+
+        return document
+    

@@ -3,6 +3,7 @@ from typing import BinaryIO
 
 from minio import Minio
 from minio.error import S3Error
+from pathlib import Path
 
 from app.services.storage.base import StorageService
 
@@ -120,3 +121,20 @@ class MinioStorageService(StorageService):
             if exc.code in {"NoSuchKey", "NoSuchObject"}:
                 return False
             raise
+
+    async def download_file(
+        self,
+        storage_key: str,
+        destination: Path,
+    ) -> None:
+        destination.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        await asyncio.to_thread(
+            self.client.fget_object,
+            self.bucket_name,
+            storage_key,
+            str(destination),
+        )

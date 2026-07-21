@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routers import auth, workspace, documents
+from app.api.routers import auth, workspace, documents, doc_parsing
 from app.api import health
 
 
@@ -10,3 +10,5 @@ api_router.include_router(health.router)
 api_router.include_router(auth.router)
 api_router.include_router(workspace.router)
 api_router.include_router(documents.router)
+
+api_router.include_router(doc_parsing.router)
