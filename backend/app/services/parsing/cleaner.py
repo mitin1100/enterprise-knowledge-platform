@@ -44,8 +44,15 @@ class TextCleaner:
         self,
         pages: list[PageContent],
     ) -> tuple[str, list[str]]:
+        final_text, _, warnings = self.clean_pages_with_boundaries(pages)
+        return final_text, warnings
+
+    def clean_pages_with_boundaries(
+        self,
+        pages: list[PageContent],
+    ) -> tuple[str, list[PageContent], list[str]]:
         if not pages:
-            return "", []
+            return "", [], []
 
         warnings: list[str] = []
 
@@ -61,7 +68,7 @@ class TextCleaner:
             normalized_pages
         )
 
-        cleaned_pages: list[str] = []
+        cleaned_pages: list[PageContent] = []
 
         for page in normalized_pages:
             cleaned_page = self._clean_page(
@@ -70,9 +77,16 @@ class TextCleaner:
             )
 
             if cleaned_page:
-                cleaned_pages.append(cleaned_page)
+                cleaned_pages.append(
+                    PageContent(
+                        page_number=page.page_number,
+                        text=cleaned_page,
+                    )
+                )
 
-        final_text = "\n\n".join(cleaned_pages).strip()
+        final_text = "\n\n".join(
+            page.text for page in cleaned_pages
+        ).strip()
         final_text = self._final_cleanup(final_text)
 
         if len(final_text) > self._max_output_chars:
@@ -82,7 +96,7 @@ class TextCleaner:
                 "was truncated."
             )
 
-        return final_text, warnings
+        return final_text, cleaned_pages, warnings
 
     def clean_text(self, text: str) -> str:
         normalized = self.normalize_unicode(text)

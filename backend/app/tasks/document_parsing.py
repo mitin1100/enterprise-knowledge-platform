@@ -6,6 +6,7 @@ from celery import Task
 
 from app.core.celery_app import celery_app
 from app.db.session import AsyncSessionLocal
+from app.tasks.chunking import chunk_document_task
 from app.services.parsing.exception import (
     DocumentNotFoundError,
     DocumentPageLimitExceededError,
@@ -86,6 +87,12 @@ async def _parse_document(
         result = await service.parse_document(
             parsed_document_id
         )
+
+        # Chunking depends on the parsed text, so it is queued right after
+        # parsing succeeds rather than requiring a separate manual trigger.
+        from app.tasks.chunking import chunk_document_task
+
+        chunk_document_task.delay(document_id)
 
         return {
             "document_id": document_id,

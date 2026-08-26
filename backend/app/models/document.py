@@ -11,6 +11,8 @@ from app.models.base import BaseModel
 from app.utils.enum import DocumentStatus, StorageProvider
 
 if TYPE_CHECKING:
+    from app.models.document_chunk import DocumentChunk
+    from app.models.document_chunking import DocumentChunking
     from app.models.document_parsing import DocumentParsing
     from app.models.workspace import Workspace
 
@@ -113,6 +115,24 @@ class Document(BaseModel, table=True):
     )
 
     parsings: Optional["DocumentParsing"] = Relationship(
+        back_populates="document",
+        sa_relationship_kwargs={
+            "cascade": "all, delete-orphan",
+            "passive_deletes": True,
+            "uselist": False,
+        },
+    )
+
+    chunks: list["DocumentChunk"] = Relationship(
+        back_populates="document",
+        sa_relationship_kwargs={
+            "cascade": "all, delete-orphan",
+            "passive_deletes": True,
+            "order_by": "DocumentChunk.chunk_index",
+        },
+    )
+
+    chunking: Optional["DocumentChunking"] = Relationship(
         back_populates="document",
         sa_relationship_kwargs={
             "cascade": "all, delete-orphan",

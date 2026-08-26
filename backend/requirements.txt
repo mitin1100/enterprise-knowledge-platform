@@ -25,3 +25,6 @@ PyMuPDF>=1.26,<2.0
 python-docx>=1.2,<2.0
 charset-normalizer>=3.4,<4.0
 Pillow
+
+tiktoken>=0.8,<1.0
+google-genai>=1.0,<2.0

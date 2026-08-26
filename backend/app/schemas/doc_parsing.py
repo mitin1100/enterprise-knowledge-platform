@@ -31,6 +31,14 @@ class ParseResult(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
+    pages: list[ParsedPage] = Field(
+        default_factory=list,
+        description=(
+            "Cleaned text per page, preserved so chunking can attribute "
+            "each chunk to a page number for citation."
+        ),
+    )
+
 class DocumentParsingResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from charset_normalizer import from_bytes
 
-from app.schemas.doc_parsing import ParseResult
+from app.schemas.doc_parsing import ParsedPage, ParseResult
 from app.services.parsing.base import BaseDocumentParser
 from app.services.parsing.cleaner import PageContent, TextCleaner
 from app.services.parsing.exception import EmptyDocumentError
@@ -64,13 +64,15 @@ class TextDocumentParser(BaseDocumentParser):
             encoding = detected.encoding
             warnings = []
 
-        cleaned_text, cleaner_warnings = self._cleaner.clean_pages(
-            [
-                PageContent(
-                    page_number=1,
-                    text=text,
-                )
-            ]
+        cleaned_text, cleaned_pages, cleaner_warnings = (
+            self._cleaner.clean_pages_with_boundaries(
+                [
+                    PageContent(
+                        page_number=1,
+                        text=text,
+                    )
+                ]
+            )
         )
 
         warnings.extend(cleaner_warnings)
@@ -93,5 +95,12 @@ class TextDocumentParser(BaseDocumentParser):
             metadata={
                 "source_extension": file_path.suffix.lower(),
             },
+            pages=[
+                ParsedPage(
+                    page_number=page.page_number,
+                    text=page.text,
+                )
+                for page in cleaned_pages
+            ],
         )
     

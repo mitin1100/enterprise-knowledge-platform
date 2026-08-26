@@ -11,7 +11,14 @@ class DocumentParsingStatus(StrEnum):
     PARSING = "PARSING"
     PARSED = "PARSED"
     FAILED = "FAILED"
-    
+
+class ChunkingStatus(StrEnum):
+    CHUNKING_QUEUED = "CHUNKING_QUEUED"
+    CHUNKING = "CHUNKING"
+    EMBEDDING = "EMBEDDING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+
 class DocumentIngestionStatus(StrEnum):
     """Document ingestion processing status."""
 

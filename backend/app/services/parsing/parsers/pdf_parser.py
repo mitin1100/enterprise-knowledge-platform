@@ -4,7 +4,7 @@ from typing import Any
 
 import pymupdf
 
-from app.schemas.doc_parsing import ParseResult
+from app.schemas.doc_parsing import ParsedPage, ParseResult
 from app.services.parsing.base import BaseDocumentParser
 from app.services.parsing.cleaner import PageContent, TextCleaner
 from app.services.parsing.exception import (
@@ -147,8 +147,8 @@ class PdfDocumentParser(BaseDocumentParser):
                     }
                 )
 
-            cleaned_text, cleaner_warnings = (
-                self._cleaner.clean_pages(pages)
+            cleaned_text, cleaned_pages, cleaner_warnings = (
+                self._cleaner.clean_pages_with_boundaries(pages)
             )
 
             warnings.extend(cleaner_warnings)
@@ -174,6 +174,13 @@ class PdfDocumentParser(BaseDocumentParser):
                     ),
                     "pages": page_metadata,
                 },
+                pages=[
+                    ParsedPage(
+                        page_number=page.page_number,
+                        text=page.text,
+                    )
+                    for page in cleaned_pages
+                ],
             )
 
         finally:

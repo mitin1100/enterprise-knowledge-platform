@@ -1,5 +1,7 @@
 from app.models.conversation import Conversation
 from app.models.document import Document, DocumentStatus
+from app.models.document_chunk import DocumentChunk
+from app.models.document_chunking import DocumentChunking
 from app.models.document_parsing import DocumentParsing
 from app.models.message import Message, MessageRole
 from app.models.user import User
@@ -10,7 +12,9 @@ __all__ = [
     "Workspace",
     "Document",
     "DocumentStatus",
+    "DocumentParsing",
     "DocumentChunk",
+    "DocumentChunking",
     "Conversation",
     "Message",
     "MessageRole",

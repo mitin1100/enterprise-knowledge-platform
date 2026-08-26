@@ -142,6 +142,13 @@ class ParsingService:
                     "table_count": result.table_count,
                     "warnings": result.warnings,
                     **result.metadata,
+                    "page_texts": [
+                        {
+                            "page_number": page.page_number,
+                            "text": page.text,
+                        }
+                        for page in result.pages
+                    ],
                 },
             )
 

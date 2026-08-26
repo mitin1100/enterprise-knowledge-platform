@@ -108,6 +108,54 @@ class Settings(BaseSettings):
         alias="PARSING_MAX_OUTPUT_CHARS",
     )
 
+    # Chunking
+    chunk_size_tokens: int = Field(
+        default=800,
+        alias="CHUNK_SIZE_TOKENS",
+    )
+
+    chunk_overlap_tokens: int = Field(
+        default=150,
+        alias="CHUNK_OVERLAP_TOKENS",
+    )
+
+    chunk_min_tokens: int = Field(
+        default=100,
+        alias="CHUNK_MIN_TOKENS",
+    )
+
+    chunking_token_encoding: str = Field(
+        default="cl100k_base",
+        alias="CHUNKING_TOKEN_ENCODING",
+    )
+
+    # Embedding
+    embedding_provider: Literal["google", "local"] = Field(
+        default="local",
+        alias="EMBEDDING_PROVIDER",
+    )
+
+    embedding_model: str = Field(
+        default="gemini-embedding-001",
+        alias="EMBEDDING_MODEL",
+    )
+
+    embedding_dimensions: int = Field(
+        default=768,
+        alias="EMBEDDING_DIMENSIONS",
+    )
+
+    embedding_batch_size: int = Field(
+        default=32,
+        alias="EMBEDDING_BATCH_SIZE",
+    )
+
+    # Vector store (Elasticsearch)
+    elasticsearch_chunks_index: str = Field(
+        default="document_chunks",
+        alias="ELASTICSEARCH_CHUNKS_INDEX",
+    )
+
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"

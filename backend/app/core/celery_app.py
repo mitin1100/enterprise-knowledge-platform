@@ -9,7 +9,8 @@ celery_app = Celery(
     broker=settings.redis_url,
     backend=settings.redis_url,
     include=[
-        "app.tasks.document_parsing"
+        "app.tasks.document_parsing",
+        "app.tasks.chunking",
     ]
 )
 
@@ -26,6 +27,9 @@ celery_app.conf.update(
     task_routes={
         "documents.parse": {
             "queue": "document_parsing",
+        },
+        "documents.chunk": {
+            "queue": "chunking",
         },
     },
 )

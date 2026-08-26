@@ -4,7 +4,7 @@ from docx import Document as DocxDocument
 from docx.table import Table
 from docx.text.paragraph import Paragraph
 
-from app.schemas.doc_parsing import ParseResult
+from app.schemas.doc_parsing import ParsedPage, ParseResult
 from app.services.parsing.base import BaseDocumentParser
 from app.services.parsing.cleaner import PageContent, TextCleaner
 from app.services.parsing.exception import (
@@ -75,13 +75,15 @@ class DocxDocumentParser(BaseDocumentParser):
 
         raw_text = "\n\n".join(blocks)
 
-        cleaned_text, warnings = self._cleaner.clean_pages(
-            [
-                PageContent(
-                    page_number=1,
-                    text=raw_text,
-                )
-            ]
+        cleaned_text, cleaned_pages, warnings = (
+            self._cleaner.clean_pages_with_boundaries(
+                [
+                    PageContent(
+                        page_number=1,
+                        text=raw_text,
+                    )
+                ]
+            )
         )
 
         if not cleaned_text.strip():
@@ -103,6 +105,13 @@ class DocxDocumentParser(BaseDocumentParser):
                 "paragraph_count": len(document.paragraphs),
                 "table_count": table_count,
             },
+            pages=[
+                ParsedPage(
+                    page_number=page.page_number,
+                    text=page.text,
+                )
+                for page in cleaned_pages
+            ],
         )
 
     @staticmethod
