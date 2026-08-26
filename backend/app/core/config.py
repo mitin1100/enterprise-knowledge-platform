@@ -156,6 +156,38 @@ class Settings(BaseSettings):
         alias="ELASTICSEARCH_CHUNKS_INDEX",
     )
 
+    # Retrieval
+    retrieval_top_k: int = Field(
+        default=10,
+        alias="RETRIEVAL_TOP_K",
+    )
+
+    retrieval_candidate_k: int = Field(
+        default=20,
+        alias="RETRIEVAL_CANDIDATE_K",
+    )
+
+    retrieval_rerank_top_k: int = Field(
+        default=5,
+        alias="RETRIEVAL_RERANK_TOP_K",
+    )
+
+    retrieval_rrf_k: int = Field(
+        default=60,
+        alias="RETRIEVAL_RRF_K",
+    )
+
+    # Reranking
+    reranker_provider: Literal["lexical", "google"] = Field(
+        default="lexical",
+        alias="RERANKER_PROVIDER",
+    )
+
+    reranker_model: str = Field(
+        default="gemini-2.5-flash",
+        alias="RERANKER_MODEL",
+    )
+
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"

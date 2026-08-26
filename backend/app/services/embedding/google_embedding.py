@@ -28,13 +28,30 @@ class GoogleEmbeddingService(EmbeddingService):
         for start in range(0, len(texts), self._batch_size):
             batch = texts[start : start + self._batch_size]
 
-            embeddings.extend(await self._embed_batch(batch))
+            embeddings.extend(
+                await self._embed_batch(
+                    batch,
+                    task_type="RETRIEVAL_DOCUMENT",
+                )
+            )
 
         return embeddings
+
+    async def embed_query(
+        self,
+        text: str,
+    ) -> list[float]:
+        embeddings = await self._embed_batch(
+            [text],
+            task_type="RETRIEVAL_QUERY",
+        )
+
+        return embeddings[0]
 
     async def _embed_batch(
         self,
         batch: list[str],
+        task_type: str,
     ) -> list[list[float]]:
         response = await asyncio.to_thread(
             self._client.models.embed_content,
@@ -42,7 +59,7 @@ class GoogleEmbeddingService(EmbeddingService):
             contents=batch,
             config=types.EmbedContentConfig(
                 output_dimensionality=self.dimensions,
-                task_type="RETRIEVAL_DOCUMENT",
+                task_type=task_type,
             ),
         )
 

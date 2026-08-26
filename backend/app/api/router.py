@@ -1,6 +1,13 @@
 from fastapi import APIRouter
 
-from app.api.routers import auth, workspace, documents, doc_parsing, chunking
+from app.api.routers import (
+    auth,
+    workspace,
+    documents,
+    doc_parsing,
+    chunking,
+    retrieval,
+)
 from app.api import health
 
 
@@ -13,3 +20,4 @@ api_router.include_router(documents.router)
 
 api_router.include_router(doc_parsing.router)
 api_router.include_router(chunking.router)
+api_router.include_router(retrieval.router)
