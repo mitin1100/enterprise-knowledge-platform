@@ -1,0 +1,32 @@
+[
+  {
+    "question": "What is the standard annual leave entitlement for full-time employees?",
+    "expected_answer": "Full-time employees are entitled to 12 days of annual leave per year, accrued monthly.",
+    "expected_source": ["Employee_Handbook.pdf"]
+  },
+  {
+    "question": "How long does IT have to respond to a critical security incident?",
+    "expected_answer": "IT Security must acknowledge and begin triage of a critical incident within 1 hour of it being reported.",
+    "expected_source": ["Security_Policy.pdf"]
+  },
+  {
+    "question": "What expense categories require pre-approval from a manager?",
+    "expected_answer": "Travel, client entertainment, and any single purchase over $500 require manager pre-approval.",
+    "expected_source": ["Expense_Policy.pdf"]
+  },
+  {
+    "question": "Can employees work remotely full-time?",
+    "expected_answer": "Employees may work remotely up to 3 days per week with manager approval; fully remote arrangements require VP sign-off.",
+    "expected_source": ["Remote_Work_Policy.pdf"]
+  },
+  {
+    "question": "What is the company's policy on using personal devices for work email?",
+    "expected_answer": "Personal devices may access work email only if enrolled in the company's mobile device management (MDM) system.",
+    "expected_source": ["Security_Policy.pdf"]
+  },
+  {
+    "question": "Does the handbook mention a four-day work week?",
+    "expected_answer": "I could not find this information in the provided documents.",
+    "expected_source": []
+  }
+]

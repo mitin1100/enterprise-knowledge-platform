@@ -1,9 +1,10 @@
 import { useState } from "react";
 
 import { ChatPage } from "./pages/ChatPage";
+import { EvaluationPage } from "./pages/EvaluationPage";
 import { WorkspacePage } from "./pages/WorkspacePage";
 
-type Tab = "documents" | "chat";
+type Tab = "documents" | "chat" | "evaluation";
 
 export default function App() {
   const [workspaceId, setWorkspaceId] = useState(
@@ -51,6 +52,14 @@ export default function App() {
             >
               Chat
             </button>
+
+            <button
+              type="button"
+              data-active={activeTab === "evaluation"}
+              onClick={() => setActiveTab("evaluation")}
+            >
+              Evaluation
+            </button>
           </nav>
         )}
       </header>
@@ -67,6 +76,10 @@ export default function App() {
 
       {workspaceId && activeTab === "chat" && (
         <ChatPage workspaceId={workspaceId} />
+      )}
+
+      {workspaceId && activeTab === "evaluation" && (
+        <EvaluationPage workspaceId={workspaceId} />
       )}
     </div>
   );

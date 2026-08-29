@@ -224,6 +224,22 @@ class Settings(BaseSettings):
         alias="OLLAMA_BASE_URL",
     )
 
+    # Evaluation
+    evaluation_pass_threshold: float = Field(
+        default=0.6,
+        alias="EVALUATION_PASS_THRESHOLD",
+    )
+
+    evaluation_hallucination_threshold: float = Field(
+        default=0.5,
+        alias="EVALUATION_HALLUCINATION_THRESHOLD",
+    )
+
+    evaluation_max_dataset_items: int = Field(
+        default=200,
+        alias="EVALUATION_MAX_DATASET_ITEMS",
+    )
+
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"

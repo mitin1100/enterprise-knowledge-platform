@@ -417,3 +417,251 @@ p {
   color: #536078;
   font-size: 0.85rem;
 }
+
+/* Evaluation */
+
+.evaluation-panel__layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.evaluation-panel__dashboard {
+  min-width: 0;
+}
+
+.evaluation-uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.evaluation-uploader__file {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #536078;
+}
+
+.evaluation-uploader__preview {
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid #e3e8f2;
+  border-radius: 12px;
+}
+
+.evaluation-uploader__preview table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.evaluation-uploader__preview th,
+.evaluation-uploader__preview td {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #e3e8f2;
+}
+
+.evaluation-uploader__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+
+.evaluation-uploader__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #536078;
+}
+
+.evaluation-uploader__form input,
+.evaluation-uploader__form select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7deed;
+}
+
+.evaluation-uploader__form button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #3157d5;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.evaluation-uploader__form button:disabled {
+  background: #a9b5d6;
+  cursor: not-allowed;
+}
+
+.evaluation-run-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.evaluation-run-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d7deed;
+  background: white;
+  cursor: pointer;
+}
+
+.evaluation-run-list__item[data-active="true"] {
+  background: #eef3ff;
+  outline: 1px solid #3157d5;
+}
+
+.evaluation-run-list__name {
+  font-weight: 700;
+}
+
+.evaluation-run-list__meta {
+  font-size: 0.8rem;
+  color: #8290ab;
+}
+
+.evaluation-run-list__pass-rate {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #9c2c2c;
+}
+
+.evaluation-run-list__pass-rate[data-passing="true"] {
+  color: #17663a;
+}
+
+.evaluation-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.evaluation-summary__card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 16px rgba(32, 45, 75, 0.08);
+}
+
+.evaluation-summary__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5870b8;
+}
+
+.evaluation-summary__value {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.evaluation-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.evaluation-results-table th,
+.evaluation-results-table td {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e3e8f2;
+  vertical-align: top;
+}
+
+.evaluation-results-table__row {
+  cursor: pointer;
+}
+
+.evaluation-results-table__row:hover {
+  background: #f8faff;
+}
+
+.evaluation-results-table__answer {
+  max-width: 360px;
+}
+
+.evaluation-results-table__error {
+  color: #9c2c2c;
+  font-style: italic;
+}
+
+.evaluation-results-table__badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  background: #fff0f0;
+  color: #9c2c2c;
+}
+
+.evaluation-results-table__badge[data-passed="true"] {
+  background: #e8f8ef;
+  color: #17663a;
+}
+
+.evaluation-results-table__hallucination {
+  margin-left: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #b5651d;
+}
+
+.evaluation-results-table__detail-row td {
+  background: #f8faff;
+}
+
+.evaluation-results-table__detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.evaluation-results-table__detail h4 {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5870b8;
+}
+
+.evaluation-results-table__detail ul,
+.evaluation-results-table__detail ol {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+}
+
+.evaluation-results-table__reasoning {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #536078;
+}

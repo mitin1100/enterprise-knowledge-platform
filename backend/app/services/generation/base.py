@@ -5,9 +5,20 @@ from app.schemas.retrieval import RetrievedChunk
 
 
 @dataclass(slots=True)
+class TokenUsage:
+    prompt_tokens: int
+    completion_tokens: int
+
+    @property
+    def total_tokens(self) -> int:
+        return self.prompt_tokens + self.completion_tokens
+
+
+@dataclass(slots=True)
 class GeneratedAnswer:
     answer: str
     cited_indices: list[int] = field(default_factory=list)
+    usage: TokenUsage | None = None
 
 
 @dataclass(slots=True)
@@ -36,5 +47,15 @@ class GenerationService(ABC):
 
         `cited_indices` are 0-based positions into `context` that the
         model reports it actually relied on to answer.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def generate_judgment(self, prompt: str) -> str:
+        """
+        Send a raw evaluation prompt straight to the LLM and return its
+        raw text response, bypassing the QA prompt/response contract.
+        Used only by the evaluation pipeline to run an LLM-as-judge over
+        a generated answer.
         """
         raise NotImplementedError

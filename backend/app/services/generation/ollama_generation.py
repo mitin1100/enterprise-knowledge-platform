@@ -7,6 +7,7 @@ from app.services.generation.base import (
     ChatTurn,
     GeneratedAnswer,
     GenerationService,
+    TokenUsage,
 )
 from app.services.generation.exception import GenerationError
 from app.services.generation.prompt import build_prompt, parse_response
@@ -64,6 +65,43 @@ class OllamaGenerationService(GenerationService):
                 "Failed to reach the self-hosted Ollama model."
             ) from exc
 
-        raw_text = response.json().get("response", "")
+        payload = response.json()
+        generated = parse_response(payload.get("response", ""), len(context))
+        generated.usage = _extract_usage(payload)
 
-        return parse_response(raw_text, len(context))
+        return generated
+
+    async def generate_judgment(self, prompt: str) -> str:
+        try:
+            async with httpx.AsyncClient(timeout=self._timeout) as client:
+                response = await client.post(
+                    f"{self._base_url}/api/generate",
+                    json={
+                        "model": self._model,
+                        "prompt": prompt,
+                        "stream": False,
+                        "format": "json",
+                        "options": {"temperature": 0.0},
+                    },
+                )
+                response.raise_for_status()
+        except httpx.HTTPError as exc:
+            logger.exception("Ollama judgment call failed.")
+            raise GenerationError(
+                "Failed to reach the self-hosted Ollama model."
+            ) from exc
+
+        return response.json().get("response", "")
+
+
+def _extract_usage(payload: dict) -> TokenUsage | None:
+    prompt_tokens = payload.get("prompt_eval_count")
+    completion_tokens = payload.get("eval_count")
+
+    if prompt_tokens is None or completion_tokens is None:
+        return None
+
+    return TokenUsage(
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+    )

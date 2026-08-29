@@ -1,0 +1,7 @@
+question,expected_answer,expected_source
+"What is the standard annual leave entitlement for full-time employees?","Full-time employees are entitled to 12 days of annual leave per year, accrued monthly.",Employee_Handbook.pdf
+"How long does IT have to respond to a critical security incident?","IT Security must acknowledge and begin triage of a critical incident within 1 hour of it being reported.",Security_Policy.pdf
+"What expense categories require pre-approval from a manager?","Travel, client entertainment, and any single purchase over $500 require manager pre-approval.",Expense_Policy.pdf
+"Can employees work remotely full-time?","Employees may work remotely up to 3 days per week with manager approval; fully remote arrangements require VP sign-off.",Remote_Work_Policy.pdf
+"What is the company's policy on using personal devices for work email?","Personal devices may access work email only if enrolled in the company's mobile device management (MDM) system.",Security_Policy.pdf
+"Does the handbook mention a four-day work week?","I could not find this information in the provided documents.",

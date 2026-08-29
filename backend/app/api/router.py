@@ -8,6 +8,7 @@ from app.api.routers import (
     chunking,
     retrieval,
     chat,
+    evaluation,
 )
 from app.api import health
 
@@ -23,3 +24,4 @@ api_router.include_router(doc_parsing.router)
 api_router.include_router(chunking.router)
 api_router.include_router(retrieval.router)
 api_router.include_router(chat.router)
+api_router.include_router(evaluation.router)

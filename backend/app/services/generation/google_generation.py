@@ -9,6 +9,7 @@ from app.services.generation.base import (
     ChatTurn,
     GeneratedAnswer,
     GenerationService,
+    TokenUsage,
 )
 from app.services.generation.exception import GenerationError
 from app.services.generation.prompt import build_prompt, parse_response
@@ -58,4 +59,41 @@ class GoogleGenerationService(GenerationService):
                 "Failed to generate an answer using the Google LLM."
             ) from exc
 
-        return parse_response(response.text or "", len(context))
+        generated = parse_response(response.text or "", len(context))
+        generated.usage = _extract_usage(response)
+
+        return generated
+
+    async def generate_judgment(self, prompt: str) -> str:
+        try:
+            response = await asyncio.to_thread(
+                self._client.models.generate_content,
+                model=self._model,
+                contents=prompt,
+                config=types.GenerateContentConfig(temperature=0.0),
+            )
+        except Exception as exc:
+            logger.exception("Google judgment call failed.")
+            raise GenerationError(
+                "Failed to run the evaluation judge using the Google LLM."
+            ) from exc
+
+        return response.text or ""
+
+
+def _extract_usage(response) -> TokenUsage | None:
+    usage = getattr(response, "usage_metadata", None)
+
+    if usage is None:
+        return None
+
+    prompt_tokens = getattr(usage, "prompt_token_count", None)
+    completion_tokens = getattr(usage, "candidates_token_count", None)
+
+    if prompt_tokens is None or completion_tokens is None:
+        return None
+
+    return TokenUsage(
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+    )
