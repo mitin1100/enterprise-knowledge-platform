@@ -32,6 +32,7 @@ class Citation(BaseModel):
     document_name: str | None = None
     chunk_index: int
     page_number: int | None = None
+    chunk_preview: str
     score: float
 
 

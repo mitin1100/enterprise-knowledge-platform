@@ -11,6 +11,7 @@ from app.repositories.document_chunk import DocumentChunkRepository
 from app.repositories.document_chunking import DocumentChunkingRepository
 from app.repositories.document_parsing import DocumentParsingRepository
 from app.schemas.chunking import (
+    ChunkContextResponse,
     ChunkingTriggerResponse,
     ChunkListResponse,
     ChunkResponse,
@@ -131,4 +132,78 @@ async def list_document_chunks(
             for chunk in chunks
         ],
         total=total,
+    )
+
+
+@router.get(
+    "/{document_id}/chunks/{chunk_index}/context",
+    response_model=ChunkContextResponse,
+    tags=["Documents Chunking"],
+)
+async def get_chunk_context(
+    document_id: UUID,
+    chunk_index: int,
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_db_session),
+) -> ChunkContextResponse:
+    """
+    Fetch a single chunk plus its immediate neighbors, so a clicked
+    citation can open the source document at that point and highlight
+    the exact passage the answer relied on.
+    """
+    repository = DocumentRepository(session)
+    chunk_repository = DocumentChunkRepository(session)
+
+    document = await repository.get_by_id(document_id)
+
+    if document is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found.",
+        )
+
+    if document.uploaded_by != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have access to this document.",
+        )
+
+    chunk = await chunk_repository.get_by_document_and_index(
+        document_id=document_id,
+        chunk_index=chunk_index,
+    )
+
+    if chunk is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Chunk not found.",
+        )
+
+    previous_chunk, next_chunk = None, None
+
+    if chunk_index > 0:
+        previous_chunk = await chunk_repository.get_by_document_and_index(
+            document_id=document_id,
+            chunk_index=chunk_index - 1,
+        )
+
+    next_chunk = await chunk_repository.get_by_document_and_index(
+        document_id=document_id,
+        chunk_index=chunk_index + 1,
+    )
+
+    return ChunkContextResponse(
+        document_id=document.id,
+        document_name=document.original_filename,
+        chunk=ChunkResponse.model_validate(chunk),
+        previous=(
+            ChunkResponse.model_validate(previous_chunk)
+            if previous_chunk
+            else None
+        ),
+        next=(
+            ChunkResponse.model_validate(next_chunk)
+            if next_chunk
+            else None
+        ),
     )

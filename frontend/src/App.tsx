@@ -1,99 +1,73 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
+import { ChatPage } from "./pages/ChatPage";
+import { WorkspacePage } from "./pages/WorkspacePage";
 
-type HealthResponse = {
-  status: string;
-  service: string;
-};
-
-
-const apiBaseUrl =
-  import.meta.env.VITE_API_BASE_URL ??
-  "http://localhost:8000/api/v1";
-
+type Tab = "documents" | "chat";
 
 export default function App() {
-  const [health, setHealth] =
-    useState<HealthResponse | null>(null);
+  const [workspaceId, setWorkspaceId] = useState(
+    () => window.localStorage.getItem("workspaceId") ?? "",
+  );
 
-  const [error, setError] =
-    useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>("documents");
 
-
-  useEffect(() => {
-    const checkBackendHealth = async () => {
-      try {
-        const response = await fetch(
-          `${apiBaseUrl}/health`,
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `Backend trả về HTTP ${response.status}`,
-          );
-        }
-
-        const data =
-          (await response.json()) as HealthResponse;
-
-        setHealth(data);
-      } catch (requestError) {
-        if (requestError instanceof Error) {
-          setError(requestError.message);
-        } else {
-          setError("Đã xảy ra lỗi không xác định");
-        }
-      }
-    };
-
-    checkBackendHealth();
-  }, []);
-
-
-  let statusClass = "loading";
-  let statusMessage = "Đang kiểm tra backend...";
-
-  if (health) {
-    statusClass = "success";
-    statusMessage =
-      `Backend: ${health.status} — ${health.service}`;
-  }
-
-  if (error) {
-    statusClass = "error";
-    statusMessage =
-      `Không kết nối được backend: ${error}`;
-  }
-
+  const handleWorkspaceIdChange = (value: string) => {
+    setWorkspaceId(value);
+    window.localStorage.setItem("workspaceId", value);
+  };
 
   return (
-    <main className="page">
-      <section className="card">
-        <span className="eyebrow">
-          Phase 1 · Project Setup
-        </span>
+    <div className="app">
+      <header className="app__header">
+        <h1>AI Enterprise Knowledge Platform</h1>
 
-        <h1>
-          AI Enterprise Knowledge Platform
-        </h1>
+        <label className="app__workspace-input">
+          Workspace ID
+          <input
+            type="text"
+            value={workspaceId}
+            placeholder="Paste a workspace UUID"
+            onChange={(event) =>
+              handleWorkspaceIdChange(event.target.value)
+            }
+          />
+        </label>
 
-        <p>
-          React frontend đang kiểm tra kết nối
-          tới FastAPI backend.
+        {workspaceId && (
+          <nav className="app__tabs">
+            <button
+              type="button"
+              data-active={activeTab === "documents"}
+              onClick={() => setActiveTab("documents")}
+            >
+              Documents
+            </button>
+
+            <button
+              type="button"
+              data-active={activeTab === "chat"}
+              onClick={() => setActiveTab("chat")}
+            >
+              Chat
+            </button>
+          </nav>
+        )}
+      </header>
+
+      {!workspaceId && (
+        <p className="app__hint">
+          Enter a workspace ID to upload documents and ask questions.
         </p>
+      )}
 
-        <div className={`status ${statusClass}`}>
-          {statusMessage}
-        </div>
+      {workspaceId && activeTab === "documents" && (
+        <WorkspacePage workspaceId={workspaceId} />
+      )}
 
-        <a
-          href="http://localhost:8000/docs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Mở Swagger API
-        </a>
-      </section>
-    </main>
+      {workspaceId && activeTab === "chat" && (
+        <ChatPage workspaceId={workspaceId} />
+      )}
+    </div>
   );
 }

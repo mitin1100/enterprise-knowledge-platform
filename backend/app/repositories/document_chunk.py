@@ -33,6 +33,19 @@ class DocumentChunkRepository:
         await self._session.execute(statement)
         await self._session.flush()
 
+    async def get_by_document_and_index(
+        self,
+        document_id: UUID,
+        chunk_index: int,
+    ) -> DocumentChunk | None:
+        statement = select(DocumentChunk).where(
+            DocumentChunk.document_id == document_id,
+            DocumentChunk.chunk_index == chunk_index,
+        )
+
+        result = await self._session.execute(statement)
+        return result.scalar_one_or_none()
+
     async def list_by_document(
         self,
         document_id: UUID,

@@ -82,3 +82,253 @@ p {
   background: #eef3ff;
   color: #3854a5;
 }
+
+/* App shell */
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.app__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.app__workspace-input {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #536078;
+}
+
+.app__workspace-input input {
+  min-width: 320px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7deed;
+}
+
+.app__tabs {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.app__tabs button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #d7deed;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app__tabs button[data-active="true"] {
+  background: #3157d5;
+  border-color: #3157d5;
+  color: white;
+}
+
+.app__hint {
+  color: #536078;
+}
+
+/* Chat */
+
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-box__messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 240px;
+}
+
+.chat-box__typing {
+  color: #536078;
+  font-style: italic;
+}
+
+.chat-box__form {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-box__form input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7deed;
+}
+
+.chat-box__form button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #3157d5;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chat-box__form button:disabled {
+  background: #a9b5d6;
+  cursor: not-allowed;
+}
+
+.message {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 16px rgba(32, 45, 75, 0.08);
+}
+
+.message[data-role="user"] {
+  background: #eef3ff;
+}
+
+.message__content {
+  margin: 0 0 8px;
+  color: #172033;
+  white-space: pre-wrap;
+}
+
+.message__sources {
+  border-top: 1px solid #e3e8f2;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.message__sources-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5870b8;
+}
+
+.message__sources ol {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.citation-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7deed;
+  background: #f8faff;
+  cursor: pointer;
+}
+
+.citation-badge:hover {
+  border-color: #3157d5;
+}
+
+.citation-badge__ref {
+  font-weight: 700;
+  color: #3157d5;
+  font-size: 0.9rem;
+}
+
+.citation-badge__preview {
+  font-size: 0.85rem;
+  color: #536078;
+}
+
+.citation-badge__score {
+  font-size: 0.75rem;
+  color: #8290ab;
+}
+
+/* Citation viewer */
+
+.citation-viewer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 32, 51, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 10;
+}
+
+.citation-viewer {
+  width: min(640px, 100%);
+  max-height: 80vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(32, 45, 75, 0.25);
+}
+
+.citation-viewer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.citation-viewer__header h3 {
+  margin: 0;
+}
+
+.citation-viewer__page {
+  color: #536078;
+  font-size: 0.9rem;
+}
+
+.citation-viewer__header button {
+  border: none;
+  background: transparent;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #536078;
+}
+
+.citation-viewer__body {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.citation-viewer__context {
+  color: #8290ab;
+  font-size: 0.9rem;
+}
+
+.citation-viewer__highlight {
+  background: #fff6cc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #172033;
+  font-weight: 500;
+}
+
+.citation-viewer__footer {
+  margin-top: 16px;
+  color: #536078;
+  font-size: 0.85rem;
+}

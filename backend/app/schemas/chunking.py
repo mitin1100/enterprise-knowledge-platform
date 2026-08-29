@@ -31,6 +31,14 @@ class ChunkListResponse(BaseModel):
     total: int
 
 
+class ChunkContextResponse(BaseModel):
+    document_id: UUID
+    document_name: str
+    chunk: ChunkResponse
+    previous: ChunkResponse | None = None
+    next: ChunkResponse | None = None
+
+
 class ChunkingTriggerResponse(BaseModel):
     document_id: UUID
     status: str

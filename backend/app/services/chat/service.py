@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from uuid import UUID
 
@@ -8,12 +7,12 @@ from app.core.config import settings
 from app.repositories.conversation import ConversationRepository
 from app.repositories.document import DocumentRepository
 from app.repositories.message import MessageRepository
-from app.schemas.chat import ChatRequest, ChatResponse, Citation, MessageResponse
-from app.schemas.retrieval import RetrievedChunk
+from app.schemas.chat import ChatRequest, ChatResponse, MessageResponse
 from app.services.chat.exception import (
     ConversationNotFoundError,
     EmptyMessageError,
 )
+from app.services.citation.service import CitationService
 from app.services.generation.base import GenerationService
 from app.services.retrieval.exception import EmptyQueryError
 from app.services.retrieval.service import RetrievalService
@@ -42,6 +41,7 @@ class ChatService:
         self._conversation_repository = ConversationRepository(session)
         self._message_repository = MessageRepository(session)
         self._document_repository = DocumentRepository(session)
+        self._citation_service = CitationService(self._document_repository)
 
     async def ask(
         self,
@@ -94,7 +94,7 @@ class ChatService:
             context=context,
         )
 
-        citations = await self._build_citations(
+        citations = await self._citation_service.build_citations(
             context,
             generated.cited_indices,
         )
@@ -120,46 +120,3 @@ class ChatService:
                 assistant_message
             ),
         )
-
-    async def _build_citations(
-        self,
-        context: list[RetrievedChunk],
-        cited_indices: list[int],
-    ) -> list[Citation]:
-        cited_chunks = [
-            context[index]
-            for index in cited_indices
-            if 0 <= index < len(context)
-        ]
-
-        if not cited_chunks:
-            return []
-
-        document_ids = {
-            UUID(chunk.document_id) for chunk in cited_chunks
-        }
-
-        documents = await asyncio.gather(
-            *(
-                self._document_repository.get_by_id(document_id)
-                for document_id in document_ids
-            )
-        )
-
-        names_by_id = {
-            str(document.id): document.original_filename
-            for document in documents
-            if document is not None
-        }
-
-        return [
-            Citation(
-                chunk_id=chunk.chunk_id,
-                document_id=chunk.document_id,
-                document_name=names_by_id.get(chunk.document_id),
-                chunk_index=chunk.chunk_index,
-                page_number=chunk.page_number,
-                score=chunk.score,
-            )
-            for chunk in cited_chunks
-        ]
