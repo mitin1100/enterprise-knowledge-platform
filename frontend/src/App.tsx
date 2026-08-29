@@ -1,86 +1,30 @@
-import { useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import { ChatPage } from "./pages/ChatPage";
-import { EvaluationPage } from "./pages/EvaluationPage";
-import { WorkspacePage } from "./pages/WorkspacePage";
-
-type Tab = "documents" | "chat" | "evaluation";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { WorkspaceLayout } from "./components/layout/WorkspaceLayout";
+import { DashboardPage } from "./pages/DashboardPage";
+import { LoginPage } from "./pages/LoginPage";
+import { WorkspaceChatRoute } from "./pages/routes/WorkspaceChatRoute";
+import { WorkspaceDocumentsRoute } from "./pages/routes/WorkspaceDocumentsRoute";
+import { WorkspaceEvaluationRoute } from "./pages/routes/WorkspaceEvaluationRoute";
 
 export default function App() {
-  const [workspaceId, setWorkspaceId] = useState(
-    () => window.localStorage.getItem("workspaceId") ?? "",
-  );
-
-  const [activeTab, setActiveTab] = useState<Tab>("documents");
-
-  const handleWorkspaceIdChange = (value: string) => {
-    setWorkspaceId(value);
-    window.localStorage.setItem("workspaceId", value);
-  };
-
   return (
-    <div className="app">
-      <header className="app__header">
-        <h1>AI Enterprise Knowledge Platform</h1>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
 
-        <label className="app__workspace-input">
-          Workspace ID
-          <input
-            type="text"
-            value={workspaceId}
-            placeholder="Paste a workspace UUID"
-            onChange={(event) =>
-              handleWorkspaceIdChange(event.target.value)
-            }
-          />
-        </label>
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<DashboardPage />} />
 
-        {workspaceId && (
-          <nav className="app__tabs">
-            <button
-              type="button"
-              data-active={activeTab === "documents"}
-              onClick={() => setActiveTab("documents")}
-            >
-              Documents
-            </button>
+        <Route path="/workspaces/:workspaceId" element={<WorkspaceLayout />}>
+          <Route index element={<Navigate to="documents" replace />} />
+          <Route path="documents" element={<WorkspaceDocumentsRoute />} />
+          <Route path="chat" element={<WorkspaceChatRoute />} />
+          <Route path="evaluation" element={<WorkspaceEvaluationRoute />} />
+        </Route>
+      </Route>
 
-            <button
-              type="button"
-              data-active={activeTab === "chat"}
-              onClick={() => setActiveTab("chat")}
-            >
-              Chat
-            </button>
-
-            <button
-              type="button"
-              data-active={activeTab === "evaluation"}
-              onClick={() => setActiveTab("evaluation")}
-            >
-              Evaluation
-            </button>
-          </nav>
-        )}
-      </header>
-
-      {!workspaceId && (
-        <p className="app__hint">
-          Enter a workspace ID to upload documents and ask questions.
-        </p>
-      )}
-
-      {workspaceId && activeTab === "documents" && (
-        <WorkspacePage workspaceId={workspaceId} />
-      )}
-
-      {workspaceId && activeTab === "chat" && (
-        <ChatPage workspaceId={workspaceId} />
-      )}
-
-      {workspaceId && activeTab === "evaluation" && (
-        <EvaluationPage workspaceId={workspaceId} />
-      )}
-    </div>
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
   );
 }

@@ -99,28 +99,16 @@ p {
   margin-bottom: 24px;
 }
 
-.app__workspace-input {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #536078;
-}
-
-.app__workspace-input input {
-  min-width: 320px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #d7deed;
+.app__header-title {
+  margin-right: auto;
 }
 
 .app__tabs {
   display: flex;
   gap: 8px;
-  margin-left: auto;
 }
 
+.app__tabs a,
 .app__tabs button {
   padding: 8px 16px;
   border-radius: 999px;
@@ -128,9 +116,12 @@ p {
   background: white;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  color: #172033;
 }
 
-.app__tabs button[data-active="true"] {
+.app__tabs button[data-active="true"],
+.app__tabs a.app__tab--active {
   background: #3157d5;
   border-color: #3157d5;
   color: white;
@@ -138,6 +129,163 @@ p {
 
 .app__hint {
   color: #536078;
+}
+
+.app__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app__header-actions button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d7deed;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.workspace-layout__back {
+  display: inline-block;
+  margin-bottom: 6px;
+  border: none;
+  background: transparent;
+  color: #3157d5;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Auth */
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.auth-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #536078;
+}
+
+.auth-form__field input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7deed;
+  font-size: 1rem;
+}
+
+.auth-form button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #3157d5;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-form button:disabled {
+  background: #a9b5d6;
+  cursor: not-allowed;
+}
+
+.auth-card__toggle {
+  margin-top: 16px;
+  border: none;
+  background: transparent;
+  color: #3157d5;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+/* Workspaces */
+
+.create-workspace-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.create-workspace-form input {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d7deed;
+}
+
+.create-workspace-form button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #3157d5;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.create-workspace-form button:disabled {
+  background: #a9b5d6;
+  cursor: not-allowed;
+}
+
+.workspace-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.workspace-list__card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid #d7deed;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(32, 45, 75, 0.06);
+}
+
+.workspace-list__card:hover {
+  border-color: #3157d5;
+}
+
+.workspace-list__name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.workspace-list__description {
+  color: #536078;
+  font-size: 0.9rem;
+}
+
+.workspace-list__meta {
+  color: #8290ab;
+  font-size: 0.8rem;
 }
 
 /* Chat */

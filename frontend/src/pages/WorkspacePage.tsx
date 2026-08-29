@@ -1,5 +1,6 @@
 import { DocumentList } from "../components/documents/DocumentList";
 import { DocumentUpload } from "../components/documents/DocumentUpload";
+import { ProcessingStatusBanner } from "../components/documents/ProcessingStatusBanner";
 import { useDocuments } from "../hooks/useDocuments";
 
 interface WorkspacePageProps {
@@ -41,7 +42,10 @@ export function WorkspacePage({
         {error && <p role="alert">{error}</p>}
 
         {!isLoading && (
-          <DocumentList documents={documents} />
+          <>
+            <ProcessingStatusBanner documents={documents} />
+            <DocumentList documents={documents} />
+          </>
         )}
       </section>
     </main>
