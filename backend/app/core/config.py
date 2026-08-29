@@ -188,6 +188,37 @@ class Settings(BaseSettings):
         alias="RERANKER_MODEL",
     )
 
+    # Generation
+    generation_provider: Literal["google", "ollama"] = Field(
+        default="google",
+        alias="GENERATION_PROVIDER",
+    )
+
+    generation_model: str = Field(
+        default="gemini-2.5-flash",
+        alias="GENERATION_MODEL",
+    )
+
+    generation_temperature: float = Field(
+        default=0.2,
+        alias="GENERATION_TEMPERATURE",
+    )
+
+    generation_max_output_tokens: int = Field(
+        default=1024,
+        alias="GENERATION_MAX_OUTPUT_TOKENS",
+    )
+
+    generation_context_chunk_limit: int = Field(
+        default=6,
+        alias="GENERATION_CONTEXT_CHUNK_LIMIT",
+    )
+
+    OLLAMA_BASE_URL: str = Field(
+        default="http://localhost:11434",
+        alias="OLLAMA_BASE_URL",
+    )
+
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
