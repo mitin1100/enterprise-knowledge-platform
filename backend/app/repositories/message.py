@@ -61,3 +61,25 @@ class MessageRepository:
 
         result = await self._session.execute(statement)
         return result.scalar_one() or 0
+
+    async def list_recent_by_conversation(
+        self,
+        conversation_id: UUID,
+        limit: int = 8,
+    ) -> list[Message]:
+        """
+        Returns up to `limit` most recent messages, oldest first, for use
+        as short-term conversational memory (never the full history).
+        """
+        statement = (
+            select(Message)
+            .where(Message.conversation_id == conversation_id)
+            .order_by(Message.created_at.desc())
+            .limit(limit)
+        )
+
+        result = await self._session.execute(statement)
+        messages = list(result.scalars().all())
+        messages.reverse()
+
+        return messages

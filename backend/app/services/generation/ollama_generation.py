@@ -3,7 +3,11 @@ import logging
 import httpx
 
 from app.schemas.retrieval import RetrievedChunk
-from app.services.generation.base import GeneratedAnswer, GenerationService
+from app.services.generation.base import (
+    ChatTurn,
+    GeneratedAnswer,
+    GenerationService,
+)
 from app.services.generation.exception import GenerationError
 from app.services.generation.prompt import build_prompt, parse_response
 
@@ -34,8 +38,9 @@ class OllamaGenerationService(GenerationService):
         self,
         query: str,
         context: list[RetrievedChunk],
+        history: list[ChatTurn] | None = None,
     ) -> GeneratedAnswer:
-        prompt = build_prompt(query, context)
+        prompt = build_prompt(query, context, history)
 
         try:
             async with httpx.AsyncClient(timeout=self._timeout) as client:

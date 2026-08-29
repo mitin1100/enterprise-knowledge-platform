@@ -68,3 +68,21 @@ class ConversationRepository:
 
         result = await self._session.execute(statement)
         return result.scalar_one() or 0
+
+    async def update_title(
+        self,
+        *,
+        conversation: Conversation,
+        title: str | None,
+    ) -> Conversation:
+        conversation.title = title
+
+        self._session.add(conversation)
+        await self._session.flush()
+        await self._session.refresh(conversation)
+
+        return conversation
+
+    async def delete(self, conversation: Conversation) -> None:
+        await self._session.delete(conversation)
+        await self._session.flush()

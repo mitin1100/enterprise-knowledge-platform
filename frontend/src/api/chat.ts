@@ -28,6 +28,28 @@ export async function getConversations(
   return response.data;
 }
 
+export async function renameConversation(
+  workspaceId: string,
+  conversationId: string,
+  title: string,
+): Promise<ConversationItem> {
+  const response = await apiClient.patch<ConversationItem>(
+    `/workspaces/${workspaceId}/conversations/${conversationId}`,
+    { title },
+  );
+
+  return response.data;
+}
+
+export async function deleteConversation(
+  workspaceId: string,
+  conversationId: string,
+): Promise<void> {
+  await apiClient.delete(
+    `/workspaces/${workspaceId}/conversations/${conversationId}`,
+  );
+}
+
 export async function getMessages(
   workspaceId: string,
   conversationId: string,

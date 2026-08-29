@@ -214,6 +214,11 @@ class Settings(BaseSettings):
         alias="GENERATION_CONTEXT_CHUNK_LIMIT",
     )
 
+    chat_history_message_limit: int = Field(
+        default=8,
+        alias="CHAT_HISTORY_MESSAGE_LIMIT",
+    )
+
     OLLAMA_BASE_URL: str = Field(
         default="http://localhost:11434",
         alias="OLLAMA_BASE_URL",

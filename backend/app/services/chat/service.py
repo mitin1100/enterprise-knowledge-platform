@@ -13,7 +13,7 @@ from app.services.chat.exception import (
     EmptyMessageError,
 )
 from app.services.citation.service import CitationService
-from app.services.generation.base import GenerationService
+from app.services.generation.base import ChatTurn, GenerationService
 from app.services.retrieval.exception import EmptyQueryError
 from app.services.retrieval.service import RetrievalService
 from app.utils.enum import MessageRole
@@ -67,6 +67,8 @@ class ChatService:
         if not question:
             raise EmptyMessageError("Message must not be empty.")
 
+        history = await self._build_history(conversation_id)
+
         user_message = await self._message_repository.create(
             conversation_id=conversation_id,
             role=MessageRole.USER,
@@ -92,6 +94,7 @@ class ChatService:
         generated = await self._generation_service.generate_answer(
             query=question,
             context=context,
+            history=history,
         )
 
         citations = await self._citation_service.build_citations(
@@ -120,3 +123,24 @@ class ChatService:
                 assistant_message
             ),
         )
+
+    async def _build_history(
+        self,
+        conversation_id: UUID,
+    ) -> list[ChatTurn]:
+        """
+        Short-term memory only: the last few turns, never the full
+        conversation, so the prompt stays small and cheap.
+        """
+        recent_messages = (
+            await self._message_repository.list_recent_by_conversation(
+                conversation_id,
+                limit=settings.chat_history_message_limit,
+            )
+        )
+
+        return [
+            ChatTurn(role=message.role.value.lower(), content=message.content)
+            for message in recent_messages
+            if message.role in (MessageRole.USER, MessageRole.ASSISTANT)
+        ]

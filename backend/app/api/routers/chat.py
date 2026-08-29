@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.dependencies.auth import CurrentUser
 from app.api.dependency import get_db, get_vector_store
 from app.core.config import settings
+from app.models.conversation import Conversation
 from app.models.workspace import Workspace
 from app.repositories.conversation import ConversationRepository
 from app.repositories.message import MessageRepository
@@ -16,6 +17,7 @@ from app.schemas.chat import (
     ConversationCreate,
     ConversationListResponse,
     ConversationResponse,
+    ConversationUpdate,
     MessageListResponse,
     MessageResponse,
 )
@@ -61,6 +63,27 @@ async def _get_owned_workspace(
         )
 
     return workspace
+
+
+async def _get_owned_conversation(
+    workspace_id: UUID,
+    conversation_id: UUID,
+    db: AsyncSession,
+) -> Conversation:
+    conversation_repository = ConversationRepository(db)
+
+    conversation = await conversation_repository.get_by_id_and_workspace(
+        conversation_id=conversation_id,
+        workspace_id=workspace_id,
+    )
+
+    if conversation is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found.",
+        )
+
+    return conversation
 
 
 @router.post(
@@ -118,6 +141,57 @@ async def list_conversations(
         ],
         total=total,
     )
+
+
+@router.patch(
+    "/{conversation_id}",
+    response_model=ConversationResponse,
+)
+async def rename_conversation(
+    workspace_id: UUID,
+    conversation_id: UUID,
+    payload: ConversationUpdate,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+) -> ConversationResponse:
+    await _get_owned_workspace(workspace_id, current_user, db)
+
+    conversation = await _get_owned_conversation(
+        workspace_id, conversation_id, db
+    )
+
+    conversation_repository = ConversationRepository(db)
+
+    conversation = await conversation_repository.update_title(
+        conversation=conversation,
+        title=payload.title,
+    )
+
+    await db.commit()
+
+    return ConversationResponse.model_validate(conversation)
+
+
+@router.delete(
+    "/{conversation_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_conversation(
+    workspace_id: UUID,
+    conversation_id: UUID,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    await _get_owned_workspace(workspace_id, current_user, db)
+
+    conversation = await _get_owned_conversation(
+        workspace_id, conversation_id, db
+    )
+
+    conversation_repository = ConversationRepository(db)
+
+    await conversation_repository.delete(conversation)
+    await db.commit()
 
 
 @router.get(

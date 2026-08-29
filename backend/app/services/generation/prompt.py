@@ -2,7 +2,7 @@ import json
 import logging
 
 from app.schemas.retrieval import RetrievedChunk
-from app.services.generation.base import GeneratedAnswer
+from app.services.generation.base import ChatTurn, GeneratedAnswer
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,9 @@ listed below.
 Rules:
 - Base your answer strictly on the provided sources. Never rely on \
 outside knowledge or assumptions beyond what the sources state.
+- The conversation history is provided only to help you understand \
+follow-up questions (e.g. resolve "it", "that", "the previous one"). \
+Never use it as a source of facts and never cite it.
 - If the sources do not contain enough information to answer, respond \
 with exactly: "{not_found}"
 - Do not fabricate facts, numbers, or citations.
@@ -29,7 +32,11 @@ you actually relied on, e.g. 1, 3>]}}
 """.format(not_found=NOT_FOUND_ANSWER)
 
 
-def build_prompt(query: str, context: list[RetrievedChunk]) -> str:
+def build_prompt(
+    query: str,
+    context: list[RetrievedChunk],
+    history: list[ChatTurn] | None = None,
+) -> str:
     if not context:
         sources = "(no sources retrieved)"
     else:
@@ -38,8 +45,20 @@ def build_prompt(query: str, context: list[RetrievedChunk]) -> str:
             for index, chunk in enumerate(context, start=1)
         )
 
+    history_section = ""
+
+    if history:
+        turns = "\n".join(
+            f"{turn.role}: {turn.content}" for turn in history
+        )
+        history_section = (
+            "Conversation history (most recent last, context only, "
+            f"not a source):\n{turns}\n\n"
+        )
+
     return (
         f"{_SYSTEM_INSTRUCTIONS}\n\n"
+        f"{history_section}"
         f"Question: {query}\n\n"
         f"Sources:\n{sources}\n"
     )
